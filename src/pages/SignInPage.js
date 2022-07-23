@@ -34,6 +34,7 @@ const SignInPage = () => {
     control,
     handleSubmit,
     formState: { isSubmitting, errors, isValid },
+    reset,
   } = useForm({
     mode: "onChange",
     resolver: yupResolver(schema),
@@ -57,8 +58,15 @@ const SignInPage = () => {
 
   const handleSignIn = async (values) => {
     if (!isValid) return;
-
-    await signInWithEmailAndPassword(auth, values.email, values.password);
+    try {
+      await signInWithEmailAndPassword(auth, values.email, values.password);
+    } catch (error) {
+      toast.error("Incorrect email or password");
+      reset({
+        email: "",
+        password: "",
+      });
+    }
 
     navigate("/");
   };
